@@ -18,7 +18,7 @@ class CRDTLWWSet<T : Comparable> : Equatable, CustomStringConvertible {
         }
     }
 
-    func add(_ node: CRDTNode<T>) {
+    private func add(_ node: CRDTNode<T>) {
         if let index = addSet.index(of: node) {
             // found a node's value which is there
             let originalNode = addSet[index]
@@ -33,10 +33,6 @@ class CRDTLWWSet<T : Comparable> : Equatable, CustomStringConvertible {
         }
     }
 
-    func remove(_ node: CRDTNode<T>) {
-
-    }
-
     func merge(_ set: CRDTLWWSet<T>) {
         set.all().forEach { (node) in
             self.add(node)
@@ -47,7 +43,7 @@ class CRDTLWWSet<T : Comparable> : Equatable, CustomStringConvertible {
         }
     }
 
-    func all() -> [CRDTNode<T>] {
+    fileprivate func all() -> [CRDTNode<T>] {
         return addSet
     }
 
@@ -61,8 +57,8 @@ class CRDTLWWSet<T : Comparable> : Equatable, CustomStringConvertible {
 
 }
 
+// == Compare the elements in the set
 func ==<T>(left: CRDTLWWSet<T>, right: CRDTLWWSet<T>) -> Bool {
-
     guard left.all().count == right.all().count else {
         return false
     }
@@ -76,6 +72,7 @@ func ==<T>(left: CRDTLWWSet<T>, right: CRDTLWWSet<T>) -> Bool {
     return true
 }
 
+// + Merges two set
 func +<T>(left: CRDTLWWSet<T>, right: CRDTLWWSet<T>) -> CRDTLWWSet<T> {
     let set = CRDTLWWSet<T>()
     set.merge(left)

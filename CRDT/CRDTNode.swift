@@ -23,6 +23,7 @@ struct CRDTNode <T : Comparable> : Equatable, CustomStringConvertible {
 
 }
 
+// == Compare the values within two nodes
 func ==<T>(left: CRDTNode<T>, right: CRDTNode<T>) -> Bool {
     return left.t == right.t
 }
@@ -31,8 +32,8 @@ func !=<T>(left: CRDTNode<T>, right: CRDTNode<T>) -> Bool {
     return !(left == right)
 }
 
+// === Strong compare the nodes also include timestamp difference
 func ===<T>(left: CRDTNode<T>, right: CRDTNode<T>) -> Bool {
-    // Strong compare that also consider timestamp difference
     return left.t == right.t && left.timestamp == right.timestamp
 }
 
@@ -40,6 +41,7 @@ func !==<T>(left: CRDTNode<T>, right: CRDTNode<T>) -> Bool {
     return !(left === right)
 }
 
+// timestamp comparisons
 func <<T>(left: CRDTNode<T>, right: CRDTNode<T>) -> Bool {
     return left.timestamp < right.timestamp
 }
