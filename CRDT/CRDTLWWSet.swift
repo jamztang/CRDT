@@ -19,7 +19,16 @@ class CRDTLWWSet<T : Comparable> : Equatable, CustomStringConvertible {
     }
 
     func add(_ node: CRDTNode<T>) {
-        if !addSet.contains(node) {
+        if let index = addSet.index(of: node) {
+            // found a node's value which is there
+            let originalNode = addSet[index]
+            if node < originalNode {
+                // node is older than local, ignore
+            } else {
+                addSet.remove(at: index)
+                addSet.append(node)
+            }
+        } else {
             addSet.append(node)
         }
     }
@@ -59,7 +68,7 @@ func ==<T>(left: CRDTLWWSet<T>, right: CRDTLWWSet<T>) -> Bool {
     }
 
     for i in 0..<left.all().count {
-        if left[i] != right[i] {
+        if left[i] !== right[i] {
             return false
         }
     }

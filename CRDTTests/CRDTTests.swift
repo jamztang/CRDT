@@ -44,4 +44,20 @@ class CRDTTests: XCTestCase {
         XCTAssert(one == one + one, "duplication doesn't matter")
     }
 
+    func testLastWriteWins() {
+        let oneA = CRDTLWWSet(1)
+        let oneB = CRDTLWWSet(1)
+
+        XCTAssert(oneA + oneB == oneB)
+        XCTAssert(oneA + oneB != oneA)
+    }
+
+    func testTimeStampDiff() {
+        let nodeA = CRDTNode(1)
+        let nodeB = CRDTNode(1)
+
+        XCTAssert(nodeA !== nodeB, "timeStamp difference")
+        XCTAssert(nodeA < nodeB, "A.timestamp < B.timestamp")
+    }
+
 }
