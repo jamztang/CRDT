@@ -32,5 +32,10 @@ class CRDTTests: XCTestCase {
         XCTAssert(setA == setB, "setA and setB should be equal")
     }
 
-    
+    func testCommutativity() {
+        let one = CRDTLWWSet(1)
+        let two = CRDTLWWSet(2)
+
+        XCTAssert(one + two == two + one, "order should not matter")
+    }
 }

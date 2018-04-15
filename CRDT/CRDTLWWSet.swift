@@ -8,7 +8,7 @@
 
 import Cocoa
 
-class CRDTLWWSet<T : Equatable> : Equatable, CustomStringConvertible {
+class CRDTLWWSet<T : Comparable> : Equatable, CustomStringConvertible {
 
     private var addSet = [CRDTNode<T>]()
 
@@ -27,7 +27,13 @@ class CRDTLWWSet<T : Equatable> : Equatable, CustomStringConvertible {
     }
 
     func merge(_ set: CRDTLWWSet<T>) {
-        addSet.append(contentsOf: set.all())
+        set.all().forEach { (node) in
+            self.add(node)
+        }
+
+        addSet.sort { (a, b) -> Bool in
+            return a < b
+        }
     }
 
     func all() -> [CRDTNode<T>] {

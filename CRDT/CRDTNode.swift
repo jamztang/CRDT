@@ -8,7 +8,7 @@
 
 import Cocoa
 
-struct CRDTNode <T : Equatable> : Equatable, CustomStringConvertible {
+struct CRDTNode <T : Comparable> : Equatable, CustomStringConvertible {
     let t: T
     let timestamp : Date
 
@@ -24,5 +24,21 @@ struct CRDTNode <T : Equatable> : Equatable, CustomStringConvertible {
 }
 
 func ==<T>(left: CRDTNode<T>, right: CRDTNode<T>) -> Bool {
-    return left.t == right.t
+    return left.t == right.t && left.timestamp == right.timestamp
+}
+
+func <<T>(left: CRDTNode<T>, right: CRDTNode<T>) -> Bool {
+    return left.timestamp < right.timestamp
+}
+
+func ><T>(left: CRDTNode<T>, right: CRDTNode<T>) -> Bool {
+    return left.timestamp > right.timestamp
+}
+
+func <=<T>(left: CRDTNode<T>, right: CRDTNode<T>) -> Bool {
+    return left.timestamp <= right.timestamp
+}
+
+func >=<T>(left: CRDTNode<T>, right: CRDTNode<T>) -> Bool {
+    return left.timestamp >= right.timestamp
 }
