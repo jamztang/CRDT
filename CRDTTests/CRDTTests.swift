@@ -38,4 +38,10 @@ class CRDTTests: XCTestCase {
 
         XCTAssert(one + two == two + one, "order should not matter")
     }
+
+    func testIdempotence() {
+        let one = CRDTLWWSet(1)
+        XCTAssert(one == one + one, "duplication doesn't matter")
+    }
+
 }

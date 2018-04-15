@@ -19,7 +19,9 @@ class CRDTLWWSet<T : Comparable> : Equatable, CustomStringConvertible {
     }
 
     func add(_ node: CRDTNode<T>) {
-        addSet.append(node)
+        if !addSet.contains(node) {
+            addSet.append(node)
+        }
     }
 
     func remove(_ node: CRDTNode<T>) {
@@ -71,31 +73,4 @@ func +<T>(left: CRDTLWWSet<T>, right: CRDTLWWSet<T>) -> CRDTLWWSet<T> {
     set.merge(right)
     return set
 }
-
-//
-//func +<T>(left: CRDTNode<T>, right: CRDTNode<T>) -> CRDTLWWSet<T> {
-//    let set = CRDTLWWSet<T>()
-//    set.add(left)
-//    set.add(right)
-//    return set
-//}
-//
-//func +<T>(left: CRDTLWWSet<T>, right: CRDTNode<T>) -> CRDTLWWSet<T> {
-//    left.add(right)
-//    return left
-//}
-//
-//func +<T>(left: CRDTNode<T>, right: CRDTLWWSet<T>) -> CRDTLWWSet<T> {
-//    let set = CRDTLWWSet<T>()
-//    set.add(left)
-//    right.all().forEach { (node) in
-//        set.add(node)
-//    }
-//    return set
-//}
-//
-//func +=<T>( left: inout CRDTLWWSet<T>, right: CRDTNode<T>) {
-//    left = left + right
-//}
-//
 
