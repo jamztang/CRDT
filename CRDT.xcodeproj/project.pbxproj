@@ -12,6 +12,8 @@
 		23F07FDA2083A5A600A16C8F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 23F07FD92083A5A600A16C8F /* Assets.xcassets */; };
 		23F07FDD2083A5A600A16C8F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 23F07FDB2083A5A600A16C8F /* Main.storyboard */; };
 		23F07FE92083A5A600A16C8F /* CRDTTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23F07FE82083A5A600A16C8F /* CRDTTests.swift */; };
+		23F07FF42083A7BB00A16C8F /* CRDTNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23F07FF32083A7BB00A16C8F /* CRDTNode.swift */; };
+		23F07FF62083A7F000A16C8F /* CRDTLWWSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23F07FF52083A7F000A16C8F /* CRDTLWWSet.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,6 +37,8 @@
 		23F07FE42083A5A600A16C8F /* CRDTTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CRDTTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		23F07FE82083A5A600A16C8F /* CRDTTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRDTTests.swift; sourceTree = "<group>"; };
 		23F07FEA2083A5A600A16C8F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		23F07FF32083A7BB00A16C8F /* CRDTNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRDTNode.swift; sourceTree = "<group>"; };
+		23F07FF52083A7F000A16C8F /* CRDTLWWSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRDTLWWSet.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,6 +86,8 @@
 				23F07FDB2083A5A600A16C8F /* Main.storyboard */,
 				23F07FDE2083A5A600A16C8F /* Info.plist */,
 				23F07FDF2083A5A600A16C8F /* CRDT.entitlements */,
+				23F07FF32083A7BB00A16C8F /* CRDTNode.swift */,
+				23F07FF52083A7F000A16C8F /* CRDTLWWSet.swift */,
 			);
 			path = CRDT;
 			sourceTree = "<group>";
@@ -198,6 +204,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				23F07FD82083A5A600A16C8F /* ViewController.swift in Sources */,
+				23F07FF42083A7BB00A16C8F /* CRDTNode.swift in Sources */,
+				23F07FF62083A7F000A16C8F /* CRDTLWWSet.swift in Sources */,
 				23F07FD62083A5A600A16C8F /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

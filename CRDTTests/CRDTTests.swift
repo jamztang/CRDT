@@ -21,16 +21,16 @@ class CRDTTests: XCTestCase {
         super.tearDown()
     }
     
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    func testAssociativity() {
+        let one = CRDTLWWSet(1)
+        let two = CRDTLWWSet(2)
+        let three = CRDTLWWSet(3)
+
+        let setA = (one + two) + three
+        let setB = one + (two + three)
+
+        XCTAssert(setA == setB, "setA and setB should be equal")
     }
-    
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
+
     
 }
