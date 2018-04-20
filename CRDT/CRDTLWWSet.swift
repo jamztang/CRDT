@@ -15,7 +15,7 @@ class CRDTLWWSet<T : Hashable> : Equatable, CustomStringConvertible {
 
     init(_ value: T? = nil) {
         if let value = value {
-            additions[value] = Date().timeIntervalSince1970
+            additions[value] = Date().timeIntervalSinceNow
         }
     }
 

@@ -44,14 +44,6 @@ class CRDTMergeTests: XCTestCase {
         XCTAssert(one == one + one, "duplication doesn't matter")
     }
 
-    func testMergeLastWriteWins() {
-        let oneA = CRDTLWWSet(1)
-        let oneB = CRDTLWWSet(1)
-
-        XCTAssert(oneA + oneB == oneB)
-        XCTAssert(oneA + oneB != oneA)
-    }
-
     func testMergeExample() {
         let home = CRDTLWWSet<String>()
         home.add(CRDTNode("cat", 1))
