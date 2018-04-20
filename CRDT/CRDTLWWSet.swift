@@ -8,62 +8,91 @@
 
 import Cocoa
 
-class CRDTLWWSet<T : Comparable> : Equatable, CustomStringConvertible {
+class CRDTLWWSet<T : Hashable> : Equatable, CustomStringConvertible {
 
-    private var addSet = [CRDTNode<T>]()
+    internal var additions = [T: TimeInterval]()
+    internal var removals = [T: TimeInterval]()
 
-    init(_ t: T? = nil) {
-        if let t = t {
-            addSet.append(CRDTNode(t))
+    init(_ value: T? = nil) {
+        if let value = value {
+            additions[value] = Date().timeIntervalSince1970
         }
     }
 
-    private func add(_ node: CRDTNode<T>) {
-        if let index = addSet.index(of: node) {
-            // found a node's value which is there
-            let originalNode = addSet[index]
-            if node < originalNode {
-                // node is older than local, ignore
-            } else {
-                addSet.remove(at: index)
-                addSet.append(node)
+    func add(_ node: CRDTNode<T>) {
+        if let old = additions[node.value] {
+            if old < node.timestamp {
+                additions[node.value] = node.timestamp
             }
         } else {
-            addSet.append(node)
+            additions[node.value] = node.timestamp
         }
+    }
+
+    func remove(_ node: CRDTNode<T>) {
+        if let old = removals[node.value] {
+            if old < node.timestamp {
+                removals[node.value] = node.timestamp
+            }
+        } else {
+            removals[node.value] = node.timestamp
+        }
+    }
+
+    func result() -> [CRDTNode<T>] {
+        var results = [CRDTNode<T>]()
+        additions.forEach { (value, timestamp) in
+            if let removed = removals[value], removed >= timestamp {
+                // this value is removed
+            } else {
+                results.append(CRDTNode(value, timestamp))
+            }
+        }
+        return results.sorted(by: { (a, b) -> Bool in
+            return a < b
+        })
     }
 
     func merge(_ set: CRDTLWWSet<T>) {
-        set.all().forEach { (node) in
-            self.add(node)
+        set.additions.forEach { (value, timestamp) in
+            self.add(CRDTNode(value, timestamp))
         }
 
-        addSet.sort { (a, b) -> Bool in
-            return a < b
+        set.removals.forEach { (value, timestamp) in
+            self.remove(CRDTNode(value, timestamp))
         }
-    }
-
-    fileprivate func all() -> [CRDTNode<T>] {
-        return addSet
     }
 
     var description : String {
-        return "\(self.all())"
+        return "\(self.result())"
     }
 
     subscript(index: Int) -> CRDTNode<T> {
-        return addSet[index]
+        return self.result()[index]
+    }
+
+    func query(element: T) -> CRDTNode<T>? {
+        for node in self.result() {
+            if node.value == element {
+                return node
+            }
+        }
+        return nil
+    }
+
+    func count() -> Int {
+        return self.result().count;
     }
 
 }
 
 // == Compare the elements in the set
 func ==<T>(left: CRDTLWWSet<T>, right: CRDTLWWSet<T>) -> Bool {
-    guard left.all().count == right.all().count else {
+    guard left.count() == right.count() else {
         return false
     }
 
-    for i in 0..<left.all().count {
+    for i in 0..<left.count() {
         if left[i] !== right[i] {
             return false
         }

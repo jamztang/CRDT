@@ -8,24 +8,24 @@
 
 import Cocoa
 
-struct CRDTNode <T : Comparable> : Equatable, CustomStringConvertible {
-    let t: T
-    let timestamp : Date
+struct CRDTNode <T : Hashable> : Equatable, CustomStringConvertible {
+    let value: T
+    let timestamp : TimeInterval
 
-    init(_ t: T, timestamp: Date = Date()) {
-        self.t = t
+    init(_ t: T, _ timestamp: TimeInterval = Date().timeIntervalSinceNow) {
+        self.value = t
         self.timestamp = timestamp
     }
 
     var description: String {
-        return "\(t))"
+        return "\(value))"
     }
 
 }
 
 // == Compare the values within two nodes
 func ==<T>(left: CRDTNode<T>, right: CRDTNode<T>) -> Bool {
-    return left.t == right.t
+    return left.value == right.value
 }
 
 func !=<T>(left: CRDTNode<T>, right: CRDTNode<T>) -> Bool {
@@ -34,7 +34,7 @@ func !=<T>(left: CRDTNode<T>, right: CRDTNode<T>) -> Bool {
 
 // === Strong compare the nodes also include timestamp difference
 func ===<T>(left: CRDTNode<T>, right: CRDTNode<T>) -> Bool {
-    return left.t == right.t && left.timestamp == right.timestamp
+    return left.value == right.value && left.timestamp == right.timestamp
 }
 
 func !==<T>(left: CRDTNode<T>, right: CRDTNode<T>) -> Bool {

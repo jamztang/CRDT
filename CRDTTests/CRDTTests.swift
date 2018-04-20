@@ -20,44 +20,64 @@ class CRDTTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
     }
-    
-    func testAssociativity() {
-        let one = CRDTLWWSet(1)
-        let two = CRDTLWWSet(2)
-        let three = CRDTLWWSet(3)
 
-        let setA = (one + two) + three
-        let setB = one + (two + three)
-
-        XCTAssert(setA == setB, "setA and setB should be equal")
+    func testEmptySet() {
+        let animals = CRDTLWWSet<String>()
+        let result = animals.result()
+        XCTAssertEqual(result.count, 0)
     }
 
-    func testCommutativity() {
-        let one = CRDTLWWSet(1)
-        let two = CRDTLWWSet(2)
-
-        XCTAssert(one + two == two + one, "order should not matter")
+    func testAddNode() {
+        let animals = CRDTLWWSet<String>()
+        animals.add(CRDTNode("dog", 1))
+        animals.add(CRDTNode("cat", 1))
+        XCTAssertEqual(animals.count(), 2)
+        XCTAssertNotNil(animals.query(element: "cat"))
+        XCTAssertNotNil(animals.query(element: "dog"))
     }
 
-    func testIdempotence() {
-        let one = CRDTLWWSet(1)
-        XCTAssert(one == one + one, "duplication doesn't matter")
+    func testAddNodeOverridden() {
+        let animals = CRDTLWWSet<String>()
+        animals.add(CRDTNode("dog", 2))
+        animals.add(CRDTNode("dog", 1))
+        XCTAssertEqual(animals.count(), 1)
+        XCTAssertEqual(animals.query(element: "dog")!.timestamp, 2)
     }
 
-    func testLastWriteWins() {
-        let oneA = CRDTLWWSet(1)
-        let oneB = CRDTLWWSet(1)
+    func testRemoveNode() {
+        let animals = CRDTLWWSet<String>()
+        animals.add(CRDTNode("dog", 1))
+        animals.remove(CRDTNode("dog", 2))
 
-        XCTAssert(oneA + oneB == oneB)
-        XCTAssert(oneA + oneB != oneA)
+        let result = animals.result()
+        XCTAssertEqual(result.count, 0)
     }
 
-    func testTimeStampDiff() {
-        let nodeA = CRDTNode(1)
-        let nodeB = CRDTNode(1)
+    func testRemoveNodeFailed() {
+        let animals = CRDTLWWSet<String>()
+        animals.add(CRDTNode("dog", 2))
+        animals.remove(CRDTNode("dog", 1))     // cant remove dog 2
+        let result1 = animals.result()
+        XCTAssertEqual(result1.count, 1)
+    }
 
-        XCTAssert(nodeA !== nodeB, "timeStamp difference")
-        XCTAssert(nodeA < nodeB, "A.timestamp < B.timestamp")
+    func testRemoveNothingNode() {
+        let animals = CRDTLWWSet<String>()
+        animals.remove(CRDTNode("dog"))
+        let result = animals.result()
+        XCTAssertEqual(result.count, 0)
+    }
+
+    func testSetOrder() {
+        let animals = CRDTLWWSet<String>()
+        animals.add(CRDTNode("dog", 2))
+        animals.add(CRDTNode("cat", 1))
+        animals.add(CRDTNode("dog", 1))
+
+        let result = animals.result()
+        XCTAssertEqual(result.count, 2)
+        XCTAssertEqual(result[0], CRDTNode("cat", 1))
+        XCTAssertEqual(result[1], CRDTNode("dog", 2))
     }
 
 }
