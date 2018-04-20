@@ -50,18 +50,27 @@ animals.count() // returns 2
 
 ## Discussion
 
-I decided to use a dictionary for add/remove set in CRDTLWWSet because
-that can help prevent duplication.
+Implemnetaion Decision
 
-I played around with some Swift syntax to support operand operations for
-set merging. e.g. + for merge, == for compare
+- CRDTNode is a generic class that be reused in other areas
+  as soon as it's `T` is hashable and comparable, CRDTTests has examples
+on both "string" and "int"
+
+- CRDTNode/CRDTLWWSet is self contained without third party dependances
+
+- In swift we can implement comparable protocol with custom operands
+  easily, examples are provided in set merging. e.g. + for merge, == for compare
+
+- Set merging was demonstrated with the three main CRDT charactics
+  (associtivity, commutativity, and idempotence) in CRDTMergeTests
 
 Things to optimize:
 
-- CRDTLWWSet.result() is expensive
+- There's no frontend implmenetation for now due to time limitation
+- CRDTLWWSet.result() is expensive and can be cached and optimized
 - CRDTLWWSet might not contain full set of history because it's
   overridden by last timestamp
-- Test cases can be more complicated
+- Test cases can be more sophisticated
 - If the timestamp are the same for multiple elements, the result order
   could be undermined because of using Dictionary. Consider building an
 ordered dictionary in Swift if needed
