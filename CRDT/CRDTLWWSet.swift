@@ -6,7 +6,7 @@
 //  Copyright © 2018 Invision. All rights reserved.
 //
 
-import Cocoa
+import Foundation
 
 class CRDTLWWSet<T : Hashable> : Equatable, CustomStringConvertible {
 
@@ -84,28 +84,28 @@ class CRDTLWWSet<T : Hashable> : Equatable, CustomStringConvertible {
         return self.result().count;
     }
 
-}
-
-// == Compare the elements in the set
-func ==<T>(left: CRDTLWWSet<T>, right: CRDTLWWSet<T>) -> Bool {
-    guard left.count() == right.count() else {
-        return false
-    }
-
-    for i in 0..<left.count() {
-        if left[i] !== right[i] {
+    // == Compare the elements in the set
+    static func ==(left: CRDTLWWSet, right: CRDTLWWSet) -> Bool {
+        guard left.count() == right.count() else {
             return false
         }
+
+        for i in 0..<left.count() {
+            if left[i] !== right[i] {
+                return false
+            }
+        }
+
+        return true
     }
 
-    return true
+    // + Merges two set
+    static func +(left: CRDTLWWSet, right: CRDTLWWSet) -> CRDTLWWSet<T> {
+        let set = CRDTLWWSet()
+        set.merge(left)
+        set.merge(right)
+        return set
+    }
 }
 
-// + Merges two set
-func +<T>(left: CRDTLWWSet<T>, right: CRDTLWWSet<T>) -> CRDTLWWSet<T> {
-    let set = CRDTLWWSet<T>()
-    set.merge(left)
-    set.merge(right)
-    return set
-}
 
