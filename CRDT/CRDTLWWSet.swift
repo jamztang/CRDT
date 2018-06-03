@@ -10,13 +10,17 @@ import Foundation
 
 class CRDTLWWSet<T : Hashable> : Equatable, CustomStringConvertible {
 
-    internal var additions = [T: TimeInterval]()
-    internal var removals = [T: TimeInterval]()
+    internal var additions: [T: TimeInterval]
+    internal var removals: [T: TimeInterval]
 
-    init(_ value: T? = nil) {
-        if let value = value {
-            additions[value] = Date().timeIntervalSinceNow
-        }
+    init() {
+        additions = [:]
+        removals = [:]
+    }
+
+    convenience init(_ value: T) {
+        self.init()
+        additions[value] = Date().timeIntervalSinceNow
     }
 
     func add(_ node: CRDTNode<T>) {
@@ -81,7 +85,7 @@ class CRDTLWWSet<T : Hashable> : Equatable, CustomStringConvertible {
     }
 
     func count() -> Int {
-        return self.result().count;
+        return self.result().count
     }
 
     // == Compare the elements in the set
