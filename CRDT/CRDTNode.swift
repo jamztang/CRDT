@@ -5,12 +5,11 @@
 //  Created by invision on 15/4/2018.
 //  Copyright © 2018 Invision. All rights reserved.
 //
+import Foundation
 
-import Cocoa
-
-struct CRDTNode <T : Hashable> : Equatable, CustomStringConvertible {
+struct CRDTNode<T : Hashable> : Comparable, CustomStringConvertible {
     let value: T
-    let timestamp : TimeInterval
+    let timestamp: TimeInterval
 
     init(_ t: T, _ timestamp: TimeInterval = Date().timeIntervalSinceNow) {
         self.value = t
@@ -21,40 +20,21 @@ struct CRDTNode <T : Hashable> : Equatable, CustomStringConvertible {
         return "\(value))"
     }
 
-}
+    static func ==(left: CRDTNode, right: CRDTNode) -> Bool {
+        return left.value == right.value
+    }
 
-// == Compare the values within two nodes
-func ==<T>(left: CRDTNode<T>, right: CRDTNode<T>) -> Bool {
-    return left.value == right.value
-}
+    // === Strong compare the nodes also include timestamp difference
+    static func ===(left: CRDTNode, right: CRDTNode) -> Bool {
+        return left.value == right.value && left.timestamp == right.timestamp
+    }
 
-func !=<T>(left: CRDTNode<T>, right: CRDTNode<T>) -> Bool {
-    return !(left == right)
-}
+    static func !==(left: CRDTNode, right: CRDTNode) -> Bool {
+        return !(left === right)
+    }
 
-// === Strong compare the nodes also include timestamp difference
-func ===<T>(left: CRDTNode<T>, right: CRDTNode<T>) -> Bool {
-    return left.value == right.value && left.timestamp == right.timestamp
+    // timestamp comparisons
+    static func <(left: CRDTNode, right: CRDTNode) -> Bool {
+        return left.timestamp < right.timestamp
+    }
 }
-
-func !==<T>(left: CRDTNode<T>, right: CRDTNode<T>) -> Bool {
-    return !(left === right)
-}
-
-// timestamp comparisons
-func <<T>(left: CRDTNode<T>, right: CRDTNode<T>) -> Bool {
-    return left.timestamp < right.timestamp
-}
-
-func ><T>(left: CRDTNode<T>, right: CRDTNode<T>) -> Bool {
-    return left.timestamp > right.timestamp
-}
-
-func <=<T>(left: CRDTNode<T>, right: CRDTNode<T>) -> Bool {
-    return left.timestamp <= right.timestamp
-}
-
-func >=<T>(left: CRDTNode<T>, right: CRDTNode<T>) -> Bool {
-    return left.timestamp >= right.timestamp
-}
-
