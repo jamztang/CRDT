@@ -6,20 +6,24 @@
 //  Copyright © 2018 Invision. All rights reserved.
 //
 
-import Cocoa
+import Foundation
 
-class CRDTLWWSet<T : Hashable> : Equatable, CustomStringConvertible {
+public class CRDTLWWSet<T : Hashable> : Equatable, CustomStringConvertible {
 
-    internal var additions = [T: TimeInterval]()
-    internal var removals = [T: TimeInterval]()
+    internal var additions: [T: TimeInterval]
+    internal var removals: [T: TimeInterval]
 
-    init(_ value: T? = nil) {
-        if let value = value {
-            additions[value] = Date().timeIntervalSinceNow
-        }
+    public init() {
+        additions = [:]
+        removals = [:]
     }
 
-    func add(_ node: CRDTNode<T>) {
+    public convenience init(_ value: T) {
+        self.init()
+        additions[value] = Date().timeIntervalSinceNow
+    }
+
+    public func add(_ node: CRDTNode<T>) {
         if let old = additions[node.value] {
             if old < node.timestamp {
                 additions[node.value] = node.timestamp
@@ -29,7 +33,7 @@ class CRDTLWWSet<T : Hashable> : Equatable, CustomStringConvertible {
         }
     }
 
-    func remove(_ node: CRDTNode<T>) {
+    public func remove(_ node: CRDTNode<T>) {
         if let old = removals[node.value] {
             if old < node.timestamp {
                 removals[node.value] = node.timestamp
@@ -39,7 +43,7 @@ class CRDTLWWSet<T : Hashable> : Equatable, CustomStringConvertible {
         }
     }
 
-    func result() -> [CRDTNode<T>] {
+    public func result() -> [CRDTNode<T>] {
         var results = [CRDTNode<T>]()
         additions.forEach { (value, timestamp) in
             if let removed = removals[value], removed >= timestamp {
@@ -53,7 +57,7 @@ class CRDTLWWSet<T : Hashable> : Equatable, CustomStringConvertible {
         })
     }
 
-    func merge(_ set: CRDTLWWSet<T>) {
+    public func merge(_ set: CRDTLWWSet<T>) {
         set.additions.forEach { (value, timestamp) in
             self.add(CRDTNode(value, timestamp))
         }
@@ -63,15 +67,15 @@ class CRDTLWWSet<T : Hashable> : Equatable, CustomStringConvertible {
         }
     }
 
-    var description : String {
+    public var description : String {
         return "\(self.result())"
     }
 
-    subscript(index: Int) -> CRDTNode<T> {
+    public subscript(index: Int) -> CRDTNode<T> {
         return self.result()[index]
     }
 
-    func query(element: T) -> CRDTNode<T>? {
+    public func query(element: T) -> CRDTNode<T>? {
         for node in self.result() {
             if node.value == element {
                 return node
@@ -80,32 +84,32 @@ class CRDTLWWSet<T : Hashable> : Equatable, CustomStringConvertible {
         return nil
     }
 
-    func count() -> Int {
-        return self.result().count;
+    public func count() -> Int {
+        return self.result().count
     }
 
-}
-
-// == Compare the elements in the set
-func ==<T>(left: CRDTLWWSet<T>, right: CRDTLWWSet<T>) -> Bool {
-    guard left.count() == right.count() else {
-        return false
-    }
-
-    for i in 0..<left.count() {
-        if left[i] !== right[i] {
+    // == Compare the elements in the set
+    public static func ==(left: CRDTLWWSet, right: CRDTLWWSet) -> Bool {
+        guard left.count() == right.count() else {
             return false
         }
+
+        for i in 0..<left.count() {
+            if left[i] !== right[i] {
+                return false
+            }
+        }
+
+        return true
     }
 
-    return true
+    // + Merges two set
+    public static func +(left: CRDTLWWSet, right: CRDTLWWSet) -> CRDTLWWSet<T> {
+        let set = CRDTLWWSet()
+        set.merge(left)
+        set.merge(right)
+        return set
+    }
 }
 
-// + Merges two set
-func +<T>(left: CRDTLWWSet<T>, right: CRDTLWWSet<T>) -> CRDTLWWSet<T> {
-    let set = CRDTLWWSet<T>()
-    set.merge(left)
-    set.merge(right)
-    return set
-}
 
